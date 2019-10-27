@@ -1,11 +1,8 @@
-folders = $(shell find . -name main.rs | xargs -n1 dirname | sed 's|^\./||')
-executables = $(patsubst %, %/main, $(folders))
+folders = $(shell find . -type d -name "day*" -d 1 | sed 's|^\./||')
 
-.PHONY: no_default $(folders) $(debug_targets)
+.PHONY: no_default $(folders)
 no_default:
 
-$(folders): %:%/main
-	@ if [ -f $@/input ]; then cat $@/input | $@/main; else $@/main; fi
-
-$(executables): %:%.rs
-	@ rustc $@.rs -g -o $@
+$(folders):
+	@ cargo build --manifest-path $@/Cargo.toml
+	@ if [ -f $@/input ]; then cat $@/input | $@/target/debug/$@; else $@/target/debug/$@; fi
