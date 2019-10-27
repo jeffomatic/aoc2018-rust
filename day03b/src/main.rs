@@ -2,6 +2,7 @@ use lazy_static::lazy_static;
 use regex::Regex;
 use std::collections::HashSet;
 use std::io::{self, Read};
+use std::str::FromStr;
 
 fn get_input() -> String {
     let stdin = io::stdin();
@@ -25,24 +26,6 @@ struct Claim {
 }
 
 impl Claim {
-    fn deserialize(s: &str) -> Option<Claim> {
-        lazy_static! {
-            // #1 @ 167,777: 23x12
-            static ref RE: Regex = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
-        }
-
-        let caps = RE.captures(s)?;
-        return Some(Claim {
-            id: caps.get(1)?.as_str().parse().ok()?,
-            p: Point {
-                x: caps.get(2)?.as_str().parse().ok()?,
-                y: caps.get(3)?.as_str().parse().ok()?,
-            },
-            w: caps.get(4)?.as_str().parse().ok()?,
-            h: caps.get(5)?.as_str().parse().ok()?,
-        });
-    }
-
     fn corners(&self) -> (Point, Point) {
         (
             self.p,
@@ -59,13 +42,39 @@ impl Claim {
         ((b1.x <= a1.x && a1.x <= b2.x) || (a1.x <= b1.x && b1.x <= a2.x))
             && ((b1.y <= a1.y && a1.y <= b2.y) || (a1.y <= b1.y && b1.y <= a2.y))
     }
+
+    fn _from_str(s: &str) -> Option<Claim> {
+        lazy_static! {
+            // #1 @ 167,777: 23x12
+            static ref RE: Regex = Regex::new(r"#(\d+) @ (\d+),(\d+): (\d+)x(\d+)").unwrap();
+        }
+
+        let caps = RE.captures(s)?;
+        return Some(Claim {
+            id: caps.get(1)?.as_str().parse().ok()?,
+            p: Point {
+                x: caps.get(2)?.as_str().parse().ok()?,
+                y: caps.get(3)?.as_str().parse().ok()?,
+            },
+            w: caps.get(4)?.as_str().parse().ok()?,
+            h: caps.get(5)?.as_str().parse().ok()?,
+        });
+    }
+}
+
+impl FromStr for Claim {
+    type Err = Box<dyn std::error::Error>;
+
+    fn from_str(s: &str) -> Result<Claim, Self::Err> {
+        match Self::_from_str(s) {
+            Some(c) => Ok(c),
+            None => Err(From::from("couldn't parse claim")),
+        }
+    }
 }
 
 fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let claims: Vec<_> = get_input()
-        .lines()
-        .map(|s| Claim::deserialize(s).unwrap())
-        .collect();
+    let claims: Vec<Claim> = get_input().lines().map(|s| s.parse().unwrap()).collect();
 
     let mut overlappers = HashSet::new();
 
