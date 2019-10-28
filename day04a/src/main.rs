@@ -39,16 +39,16 @@ impl FromStr for Log {
           static ref RE: Regex = Regex::new(r"(?x)
               \[
                   (?P<y>\d{4})-(?P<month>\d{2})-(?P<d>\d{2})
-                  \x20
+                  \s
                   (?P<h>\d{2}):(?P<min>\d{2})
               \]
-              \x20
+              \s
               (?P<event>(
-                  Guard\x20\#(?P<guard_id>\d+)\x20begins\x20shift
+                  Guard\ \#(?P<guard_id>\d+)\ begins\ shift
                   |
-                  wakes\x20up
+                  wakes\ up
                   |
-                  falls\x20asleep
+                  falls\ asleep
               ))
           ").unwrap();
         }
