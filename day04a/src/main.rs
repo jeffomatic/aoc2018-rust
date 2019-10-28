@@ -139,7 +139,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     let mut max_sleep_time = 0;
     let mut answer = 0;
-    for (guard_id, sleeps) in sleeps_by_guard.iter() {
+    for (guard_id, sleeps) in sleeps_by_guard {
         let sleep_time = sleeps
             .iter()
             .fold(0, |memo, (start, end)| memo + (end - start));
@@ -150,7 +150,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
             let all_mins = sleeps.iter().map(|(start, end)| *start..*end).flatten();
 
             match most_common(all_mins) {
-                Some(n) => answer = n * *guard_id,
+                Some(n) => answer = n * guard_id,
                 None => (),
             }
         }
