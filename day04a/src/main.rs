@@ -1,51 +1,16 @@
 use lazy_static::lazy_static;
 use regex::Regex;
-use std::cmp::Ordering;
 use std::collections::HashMap;
 use std::io::{self, Read};
 use std::str::FromStr;
 
-#[derive(Debug)]
+#[derive(Debug, Eq, PartialEq, Ord, PartialOrd)]
 struct Timestamp {
     y: i32,
     month: i32,
     d: i32,
     h: i32,
     min: i32,
-}
-
-impl Timestamp {
-    fn cmp(&self, other: &Self) -> Ordering {
-        match self.y.cmp(&other.y) {
-            Ordering::Less => return Ordering::Less,
-            Ordering::Greater => return Ordering::Greater,
-            _ => (),
-        };
-
-        match self.month.cmp(&other.month) {
-            Ordering::Less => return Ordering::Less,
-            Ordering::Greater => return Ordering::Greater,
-            _ => (),
-        };
-
-        match self.d.cmp(&other.d) {
-            Ordering::Less => return Ordering::Less,
-            Ordering::Greater => return Ordering::Greater,
-            _ => (),
-        };
-
-        match self.h.cmp(&other.h) {
-            Ordering::Less => return Ordering::Less,
-            Ordering::Greater => return Ordering::Greater,
-            _ => (),
-        };
-
-        match self.min.cmp(&other.min) {
-            Ordering::Less => return Ordering::Less,
-            Ordering::Greater => return Ordering::Greater,
-            Ordering::Equal => return Ordering::Equal,
-        };
-    }
 }
 
 #[derive(Debug)]
